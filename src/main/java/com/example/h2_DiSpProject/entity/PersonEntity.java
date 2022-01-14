@@ -1,6 +1,7 @@
 package com.example.h2_DiSpProject.entity;
 
 
+import com.sun.istack.NotNull;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -10,7 +11,7 @@ import javax.validation.constraints.*;
 @Table(name = "Person")
 @Getter
 @Setter
-//@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Entity

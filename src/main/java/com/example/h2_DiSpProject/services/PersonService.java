@@ -4,7 +4,9 @@ import com.example.h2_DiSpProject.entity.PersonEntity;
 import com.example.h2_DiSpProject.exceptions.PersonUpdateException;
 import com.example.h2_DiSpProject.exceptions.WrongPersonDataException;
 import com.example.h2_DiSpProject.repository.PersonRepository;
+
 import lombok.extern.java.Log;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +18,25 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
-    public PersonEntity insertPerson(PersonEntity person) throws Exception{
+    public Boolean insertPerson(PersonEntity person) throws Exception{
         if (!isDataCorrect(person.getFullName(), person.getBirthDate())) {
-            log.warning("Insert failed: wrong params!");
-            throw new WrongPersonDataException("Was input wrong data!");
+            log.warning("Insert failed:\tWrong params!");
+
+            return false;
+//            throw new WrongPersonDataException("Was input wrong data!");
         }
 
         log.info("Person inserted:\t\t" +   // Если запрашивать через метод - при выводе в консоль id не инкрементируется
                 person.getFullName() + '\t' + person.getBirthDate()
         );
 
-        return personRepository.save(person);
+        try{
+            personRepository.save(person);
+            return true;
+        } catch (Exception e) {
+            log.warning(e.getMessage());
+            return false;
+        }
     }
 
     public PersonEntity getOneUser(int id) {
@@ -71,6 +81,9 @@ public class PersonService {
     public PersonEntity deletePerson(int id) {
         PersonEntity deleted_person = personRepository.findById(id).get();
         personRepository.deleteById(id);
+
+//        updateDataBase(id);
+
         return deleted_person;
     }
 
@@ -92,6 +105,8 @@ public class PersonService {
         Boolean isCorrect = pattern.matcher(full_name).matches();
         if(!isCorrect) log.warning("Wrong format!\tNeed format: 'Lastname Name Patronymic(not blank)'");
         return isCorrect;
+
+//        return true;
     }
 
     private Boolean isDateCorrect(String birth_date) {                                          // Костыль для проверки корректности введенной даты формата дд.мм.ГГГГ
@@ -105,4 +120,17 @@ public class PersonService {
 
         return pattern.matcher(birth_date).matches();
     }
+
+    // TODO Надо прикрутить сдвиг записей в БД при удалении элемента
+//    private void updateDataBase(int id) {
+//        int counter = 0;
+//        for(var iter: personRepository.findAll()) {
+//            if(iter.getId() >= id) {
+//                iter.setId(id + counter++);
+//                personRepository.save(iter);
+//
+//                log.info("Object " + getFullData(iter) + " update");
+//            }
+//        }
+//    }
 }

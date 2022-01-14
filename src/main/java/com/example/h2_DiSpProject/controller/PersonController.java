@@ -16,12 +16,18 @@ public class PersonController {
     private PersonService personService;
 
     @PostMapping
-    public ResponseEntity insertPerson(@RequestBody PersonEntity person) {
-        try {
-            return ResponseEntity.ok(personService.insertPerson(person));
-        } catch (Exception e) {
-            log.warning(e.getMessage());
-            return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity insertPerson(@RequestBody PersonEntity person) throws Exception {
+//        try {
+//            return ResponseEntity.ok(personService.insertPerson(person));
+//        } catch (Exception e) {
+//            log.warning(e.getMessage());
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+
+        if (personService.insertPerson(person)) {
+            return ResponseEntity.ok(person);
+        } else {
+            return ResponseEntity.badRequest().body("Wrong data");
         }
     }
 
@@ -29,14 +35,14 @@ public class PersonController {
     public ResponseEntity getOnePerson(@RequestParam int id) {
         try {
             return ResponseEntity.ok(personService.getOneUser(id));
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.warning(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping
-    public ResponseEntity updatePerson(@RequestParam int id, String[] newData){
+    public ResponseEntity updatePerson(@RequestParam int id, String[] newData) {
         try {
             return ResponseEntity.ok(personService.updatePerson(id, newData));
         } catch (Exception e) {
