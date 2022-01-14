@@ -3,7 +3,6 @@ package com.example.h2_DiSpProject.services;
 import com.example.h2_DiSpProject.entity.PersonEntity;
 import com.example.h2_DiSpProject.exceptions.PersonUpdateException;
 import com.example.h2_DiSpProject.exceptions.WrongPersonDataException;
-import com.example.h2_DiSpProject.model.Person;
 import com.example.h2_DiSpProject.repository.PersonRepository;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +22,19 @@ public class PersonService {
             throw new WrongPersonDataException("Was input wrong data!");
         }
 
-        log.info("Person inserted");
+        log.info("Person inserted:\t\t" +   // Если запрашивать через метод - при выводе в консоль id не инкрементируется
+                person.getFullName() + '\t' + person.getBirthDate()
+        );
+
         return personRepository.save(person);
     }
 
-    public Person getOneUser(int id) {
-        PersonEntity new_person = personRepository.findById(id).get();
+    public PersonEntity getOneUser(int id) {
+        PersonEntity person = personRepository.findById(id).get();
 
-        log.info("Person was found");
-        return Person.toModel(new_person);
+        log.info("Person was found:\t\t" + getFullData(person));
+
+        return person;
     }
 
     public PersonEntity updatePerson(int id, String[] newData) throws WrongPersonDataException, PersonUpdateException {
@@ -59,15 +62,22 @@ public class PersonService {
                 }
             }
 
-            log.info("Person was updated to:\t" + person.getFullName() + ' ' + person.getBirthDate());
+            log.info("Person was updated to:\t\t" + getFullData(person));
 
             return personRepository.save(person);
         }
     }
 
-    public String deletePerson(int id) {
+    public PersonEntity deletePerson(int id) {
+        PersonEntity deleted_person = personRepository.findById(id).get();
         personRepository.deleteById(id);
-        return "Success";
+        return deleted_person;
+    }
+
+    private String getFullData(PersonEntity person) {
+        return String.format("{id:%s, fullName:%s, birthDate:%s}",
+                person.getId(), person.getFullName(), person.getBirthDate()
+        );
     }
 
     private Boolean isDataCorrect(String full_name, String birth_date) {

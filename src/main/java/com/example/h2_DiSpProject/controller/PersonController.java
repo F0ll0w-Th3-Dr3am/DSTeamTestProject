@@ -18,8 +18,7 @@ public class PersonController {
     @PostMapping
     public ResponseEntity insertPerson(@RequestBody PersonEntity person) {
         try {
-            return ResponseEntity.ok(
-                    "Пользователь " + personService.insertPerson(person).toString() + " сохранен");
+            return ResponseEntity.ok(personService.insertPerson(person));
         } catch (Exception e) {
             log.warning(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
