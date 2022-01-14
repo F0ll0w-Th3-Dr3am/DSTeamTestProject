@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -73,7 +74,39 @@ class PersonServiceTest {
         isInserted = personService.insertPerson(personEntity);
 
         assertFalse(isInserted);  // 10
+
+        personEntity = new PersonEntity("", "3.11.2000");
+        isInserted = personService.insertPerson(personEntity);
+
+        assertFalse(isInserted);  // 11
+
+        personEntity = new PersonEntity("Петр Петров", "");
+        isInserted = personService.insertPerson(personEntity);
+
+        assertFalse(isInserted);  // 12
+
+        personEntity = new PersonEntity("ПеТрОв ПеТоР", "11.12.2013");
+        isInserted = personService.insertPerson(personEntity);
+
+        assertFalse(isInserted);  // 13
+
+        personEntity = new PersonEntity("Петр Петр Петр", "11.11.2011");
+        isInserted = personService.insertPerson(personEntity);
+
+        assertFalse(isInserted);  // 14
+
+        personEntity = new PersonEntity("Николаева Анна Ильинична", "03.04.1993");
+        isInserted = personService.insertPerson(personEntity);
+
+        assertTrue(isInserted);  // 15
     }
 
 
+    @Test
+    void getOneUser() {
+        int id = 1;
+        PersonEntity person = personRepository.findById(id).get();
+        PersonEntity check_person = PersonService.getOneUser(id);
+        assertEquals(personRepository.findById(id), check_person);
+    }
 }

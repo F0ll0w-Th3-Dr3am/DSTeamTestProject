@@ -41,7 +41,6 @@ public class PersonService {
 
     public PersonEntity getOneUser(int id) {
         PersonEntity person = personRepository.findById(id).get();
-
         log.info("Person was found:\t\t" + getFullData(person));
 
         return person;
@@ -98,8 +97,8 @@ public class PersonService {
     }
 
     private Boolean isFullNameCorrect(String full_name) {
-        String regex = "^([^Ы&&[А-ЯЁ]][а-яё]+)( [^Ы&&[А-ЯЁ]][а-яё{0,}]+)" +
-                "( [^Ы&&[А-ЯЁ]][а-яё{0,}]+(евич|ович|ивич|овна|евна|чна))?$"; // Вроде рабочая регулярка для проверки ФИО на кириллице
+        String regex = "^([^Ы&&[А-ЯЁ]][а-яё]+)( [^Ы&&[А-ЯЁ]][а-яё{0,}]+)" +     // Вроде рабочая регулярка для проверки ФИО на кириллице
+                "( [^Ы&&[А-ЯЁ]][а-яё{0,}]+(евич|ович|ивич|овна|евна|чна))?$";   // БАГУЕТСЯ ПЕРВЫЙ СИМВОЛ ПОДСТРОКИ(можно ставить любой символ кроме Ы)
         Pattern pattern = Pattern.compile(regex);
 
         Boolean isCorrect = pattern.matcher(full_name).matches();
