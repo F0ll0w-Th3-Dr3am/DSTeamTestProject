@@ -18,28 +18,19 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
-    public Boolean insertPerson(PersonEntity person) throws Exception{
+    public PersonEntity insertPerson(PersonEntity person) throws WrongPersonDataException {
         if (!isDataCorrect(person.getFullName(), person.getBirthDate())) {
             log.warning("Insert failed:\tWrong params!");
-
-            return false;
-//            throw new WrongPersonDataException("Was input wrong data!");
+            throw new WrongPersonDataException("Was input wrong data!");
         }
 
         log.info("Person inserted:\t\t" +   // Если запрашивать через метод - при выводе в консоль id не инкрементируется
                 person.getFullName() + '\t' + person.getBirthDate()
         );
-
-        try{
-            personRepository.save(person);
-            return true;
-        } catch (Exception e) {
-            log.warning(e.getMessage());
-            return false;
-        }
+        return personRepository.save(person);
     }
 
-    public PersonEntity getOneUser(int id) {
+    public PersonEntity getOnePerson(int id) {
         PersonEntity person = personRepository.findById(id).get();
         log.info("Person was found:\t\t" + getFullData(person));
 
@@ -47,7 +38,7 @@ public class PersonService {
     }
 
     public PersonEntity updatePerson(int id, String[] newData) throws WrongPersonDataException, PersonUpdateException {
-        if(newData.length == 0) {
+        if (newData.length == 0) {
             throw new PersonUpdateException("Don`t have new params");
         } else {
             PersonEntity person = personRepository.findById(id).get();
@@ -81,8 +72,6 @@ public class PersonService {
         PersonEntity deleted_person = personRepository.findById(id).get();
         personRepository.deleteById(id);
 
-//        updateDataBase(id);
-
         return deleted_person;
     }
 
@@ -93,19 +82,17 @@ public class PersonService {
     }
 
     private Boolean isDataCorrect(String full_name, String birth_date) {
-        return  isFullNameCorrect(full_name) && isDateCorrect(birth_date);
+        return isFullNameCorrect(full_name) && isDateCorrect(birth_date);
     }
 
     private Boolean isFullNameCorrect(String full_name) {
-        String regex = "^([^Ы&&[А-ЯЁ]][а-яё]+)( [^Ы&&[А-ЯЁ]][а-яё{0,}]+)" +     // Вроде рабочая регулярка для проверки ФИО на кириллице
-                "( [^Ы&&[А-ЯЁ]][а-яё{0,}]+(евич|ович|ивич|овна|евна|чна))?$";   // БАГУЕТСЯ ПЕРВЫЙ СИМВОЛ ПОДСТРОКИ(можно ставить любой символ кроме Ы)
+        String regex = "^([[^ЫЪЬ]&&[А-ЯЁ]][а-яё]+)( [[^ЫЪЬ]&&[А-ЯЁ]][а-яё{0,}]+)" +     // Это работает!
+                "( [[^ЫЪЬ]&&[А-ЯЁ]][а-яё{0,}]+(евич|ович|ивич|овна|евна|чна))?$";
         Pattern pattern = Pattern.compile(regex);
 
         Boolean isCorrect = pattern.matcher(full_name).matches();
-        if(!isCorrect) log.warning("Wrong format!\tNeed format: 'Lastname Name Patronymic(not blank)'");
+        if (!isCorrect) log.warning("Wrong format!\tNeed format: 'Lastname Name Patronymic(not blank)'");
         return isCorrect;
-
-//        return true;
     }
 
     private Boolean isDateCorrect(String birth_date) {                                          // Костыль для проверки корректности введенной даты формата дд.мм.ГГГГ
@@ -121,15 +108,5 @@ public class PersonService {
     }
 
     // TODO Надо прикрутить сдвиг записей в БД при удалении элемента
-//    private void updateDataBase(int id) {
-//        int counter = 0;
-//        for(var iter: personRepository.findAll()) {
-//            if(iter.getId() >= id) {
-//                iter.setId(id + counter++);
-//                personRepository.save(iter);
-//
-//                log.info("Object " + getFullData(iter) + " update");
-//            }
-//        }
-//    }
+
 }

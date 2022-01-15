@@ -11,8 +11,8 @@ import javax.validation.constraints.*;
 @Table(name = "Person")
 @Getter
 @Setter
-//@AllArgsConstructor(access = AccessLevel.PUBLIC)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @Entity
 public class PersonEntity {
