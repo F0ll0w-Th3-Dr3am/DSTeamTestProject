@@ -11,6 +11,4 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 @Repository
 public interface PersonRepository extends CrudRepository<PersonEntity, Integer> {
-    PersonEntity findByFullName(String fullName);
-    PersonEntity findByFullNameAndBirthDate(String fullName, String birthDate);
 }
